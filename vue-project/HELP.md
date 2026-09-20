@@ -19,6 +19,8 @@ Este projeto é uma base Vue 3 + TypeScript para sistemas empresariais. A infrae
 
 O backend real deve fornecer o endpoint de login e os endpoints de cada domínio. Enquanto ele não estiver disponível, o login possui um fallback local para manter o fluxo navegável em desenvolvimento.
 
+O módulo de produtos também possui um modo demonstrativo: sem `VITE_API_BASE_URL`, os produtos são mantidos localmente no navegador e as operações de cadastro, edição e exclusão não acessam a rede. Para usar a API real, configure a variável em `.env.local`.
+
 ## 2. Requisitos e comandos
 
 Use Node.js `22.18+` ou `24.12+`.

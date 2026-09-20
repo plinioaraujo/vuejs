@@ -32,8 +32,19 @@ npm run lint
 npm run format
 ```
 
+## Desenvolvimento sem backend
+
+Sem `VITE_API_BASE_URL`, a aplicação usa o modo demonstrativo. A tela de produtos carrega dados locais e permite cadastrar, editar e excluir produtos sem fazer chamadas de rede.
+
+Para usar um backend real, crie um arquivo `.env.local`:
+
+```env
+VITE_API_BASE_URL=https://api.seu-sistema.com
+```
+
 ## Observações
 
 - A autenticação está em modo demonstrativo e pode ser substituída por um backend real.
-- O arquivo `.env.example` serve como base para variáveis de ambiente.
+- Com `VITE_API_BASE_URL` configurada, os módulos usam os endpoints HTTP do backend e enviam o token armazenado como `Bearer`.
+- O arquivo `.env.example` mostra a variável necessária para integração com uma API.
 - A estrutura foi pensada para crescer por feature e não por arquivos soltos.
