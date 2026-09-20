@@ -16,6 +16,8 @@ const form = reactive<ProductFormData>({
 })
 
 const editingId = ref<number | null>(null)
+const errorMessage = ref('')
+const isDemoMode = !import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_BASE_URL === 'https://api.example.com'
 
 const mockProducts = [
   {
@@ -56,9 +58,26 @@ async function submitForm() {
     return
   }
 
-  await productsStore.saveProduct(form, editingId.value ?? undefined)
+  errorMessage.value = ''
 
-  resetForm()
+  try {
+    if (isDemoMode) {
+      const product = {
+        id: editingId.value ?? Math.max(0, ...productsStore.items.map((item) => item.id)) + 1,
+        ...form,
+      }
+
+      productsStore.items = editingId.value
+        ? productsStore.items.map((item) => (item.id === editingId.value ? product : item))
+        : [product, ...productsStore.items]
+    } else {
+      await productsStore.saveProduct(form, editingId.value ?? undefined)
+    }
+
+    resetForm()
+  } catch {
+    errorMessage.value = 'Não foi possível salvar o produto. Verifique a configuração da API.'
+  }
 }
 
 function resetForm() {
@@ -82,7 +101,17 @@ function editProduct(product: (typeof mockProducts)[number]) {
 }
 
 async function removeProduct(id: number) {
-  await productsStore.removeProduct(id)
+  errorMessage.value = ''
+
+  try {
+    if (isDemoMode) {
+      productsStore.items = productsStore.items.filter((product) => product.id !== id)
+    } else {
+      await productsStore.removeProduct(id)
+    }
+  } catch {
+    errorMessage.value = 'Não foi possível excluir o produto. Verifique a configuração da API.'
+  }
 }
 </script>
 
@@ -110,6 +139,7 @@ async function removeProduct(id: number) {
     <div class="content">
       <form class="panel" @submit.prevent="submitForm">
         <h2>{{ editingId ? 'Editar produto' : 'Adicionar produto' }}</h2>
+        <p v-if="errorMessage" class="error" role="alert">{{ errorMessage }}</p>
 
         <label>
           Nome
